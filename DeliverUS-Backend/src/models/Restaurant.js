@@ -12,6 +12,7 @@ const loadModel = (sequelize, DataTypes) => {
       // define association here
       Restaurant.belongsTo(models.RestaurantCategory, { foreignKey: 'restaurantCategoryId', as: 'restaurantCategory' })
       Restaurant.belongsTo(models.User, { foreignKey: 'userId', as: 'user' })
+      Restaurant.belongsTo(models.Commmission, { foreignKey: 'commissionId', as: 'commission'})
       Restaurant.hasMany(models.Product, { foreignKey: 'restaurantId', as: 'products' })
       Restaurant.hasMany(models.Order, { foreignKey: 'restaurantId', as: 'orders' })
     }
@@ -64,6 +65,10 @@ const loadModel = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER
     },
     userId: {
+      allowNull: false,
+      type: DataTypes.INTEGER
+    },
+    commissionId: {
       allowNull: false,
       type: DataTypes.INTEGER
     },

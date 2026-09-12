@@ -77,6 +77,16 @@ module.exports = {
           key: 'id'
         }
       },
+      commissionId: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {
+          model: {
+            tableName: 'Commissions'
+          },
+          key: 'id'
+        }
+      },
       restaurantCategoryId: {
         allowNull: false,
         type: Sequelize.INTEGER,

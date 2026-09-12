@@ -97,7 +97,19 @@ const destroy = async function (req, res) {
 }
 
 const getCommission = async function (req, res) {
-  res.status(500).send("To be implemented")
+  let totalCommission = 0.0
+  try {
+    const pedidos = await Order.findAll({ where: { restaurantId: req.params.restaurantId } })
+    const restaurante = await Restaurant.findByPk(req.params.restaurantId,
+      { attributes: { include: { model : Commission, as: 'commission' }} }
+    )
+    for (const pedido of pedidos) {
+      totalComision += (pedido.precio * restaurante.commission.percentage) / 100
+    }
+    res.json({ "totalCommission" : totalCommission})
+  } catch (err) {
+    res.status(500).send("To be implemented")
+  }
 }
 
 const RestaurantController = {

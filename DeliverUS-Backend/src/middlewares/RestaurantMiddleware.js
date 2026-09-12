@@ -32,7 +32,22 @@ const isFreeCommission = async (commissionId) => {
 }
 
 const checkFreeCommissionLimitDuringCreation = async (req, res, next) => {
-  return res.status(500).send("To be implemented")
+  try {
+    let suma = 0
+    const restaurantes = await Restaurant.findAll({ where: { userId: req.user.id} } )
+    const esGratis = isFreeCommission(req.body.commissionId)
+    for (const restaurante of restaurantes) {
+      if (isFreeCommission(restaurante.commissionId)) {
+        suma += 1
+      }
+    }
+    if (esGratis && suma > 0) {
+      return res.status(409).send('No se puede poner otro restaurante gratis si ya hay otro anteriormente')
+    }
+    return next()
+  } catch (err) {
+    return res.status(500).send("To be implemented")
+  }
 }
 
 const checkFreeCommissionLimitDuringUpdate = async (req, res, next) => {
@@ -40,7 +55,16 @@ const checkFreeCommissionLimitDuringUpdate = async (req, res, next) => {
 }
 
 const checkNoOrdersWhenSwitchingToFree = async (req, res, next) => {
-  return res.status(500).send("To be implemented")
+  try {
+    const numPedidos = await Order.count({ where: { restaurantId: req.params.restaurantId } })
+    const esGratis = isFreeCommission(req.body.commissionId)
+    if (numPedidos > 0 && esGratis) {
+      return res.status(409).send('This restaurant has already some orders or it was free already')
+    }
+  return next()
+  } catch (err) {
+    return res.status(500).send("To be implemented")
+  }
 }
 
 export { checkRestaurantOwnership, restaurantHasNoOrders, checkFreeCommissionLimitDuringCreation, checkFreeCommissionLimitDuringUpdate, checkNoOrdersWhenSwitchingToFree }
